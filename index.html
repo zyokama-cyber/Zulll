@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Slots - Koin Virtual</title>
+<style>
+  :root {
+    --gold: #f5c542;
+    --gold-dark: #b8860b;
+    --bg: #0d0410;
+    --panel: #1a0b1f;
+    --neon: #ff2e88;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: "Georgia", serif;
+    color: #fff;
+    background: radial-gradient(ellipse at top, #3a0f2e 0%, var(--bg) 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    color: var(--gold);
+    text-shadow: 0 0 12px rgba(245,197,66,.7), 0 2px 0 var(--gold-dark);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sub {
+    font-size: .8rem;
+    color: #d9b8e0;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .machine {
+    width: 100%;
+    max-width: 440px;
+    background: linear-gradient(180deg, #2a1433, var(--panel));
+    border: 3px solid var(--gold);
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 0 30px rgba(245,197,66,.35), inset 0 0 20px rgba(0,0,0,.6);
+  }
+  .info {
+    display: flex;
+    justify-content: space-between;
+    background: #000;
+    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: .9rem;
+  }
+  .info span b { color: var(--gold); font-size: 1.1rem; }
+  .reels {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    background: #000;
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    border: 2px solid #4a2b55;
+  }
+  .reel {
+    width: 30%;
+    height: 210px;
+    background: linear-gradient(#fff3, transparent 30%, transparent 70%, #fff3), #120618;
+    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .symbol {
+    font-size: 3.2rem;
+    text-align: center;
+    line-height: 70px;
+    height: 70px;
+  }
+  .payline {
+    position: absolute;
+    left: 8px; right: 8px;
+    top: 50%;
+    height: 3px;
+    background: var(--neon);
+    box-shadow: 0 0 10px var(--neon);
+    transform: translateY(-50%);
+    opacity: .7;
+    pointer-events: none;
+  }
+  .reel.spinning .symbol { filter: blur(2px); }
+  .win-msg {
+    min-height: 44px;
+    margin: 14px 0 8px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: bold;
+  }
+  .win-msg.big { animation: pulse .6s infinite alternate; color: var(--neon); }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+  .bet-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .bet-row button, .spin, .reset {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    color: #1a0b00;
+    font-weight: bold;
+    background: linear-gradient(#ffe27a, var(--gold) 50%, var(--gold-dark));
+    box-shadow: 0 3px 0 #6b4a05;
+    transition: transform .08s;
+  }
+  .bet-row button { width: 40px; height: 40px; font-size: 1.2rem; }
+  .bet-amount {
+    min-width: 110px;
+    text-align: center;
+    background: #000;
+    border: 1px solid var(--gold-dark);
+    border-radius: 8px;
+    padding: 9px;
+    color: var(--gold);
+    font-weight: bold;
+  }
+  .spin {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .spin:active, .bet-row button:active { transform: translateY(2px); box-shadow: 0 1px 0 #6b4a05; }
+  .spin:disabled { opacity: .5; cursor: not-allowed; }
+  .paytable {
+    margin-top: 18px;
+    width: 100%;
+    max-width: 440px;
+    background: var(--panel);
+    border: 1px solid var(--gold-dark);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: .85rem;
+  }
+  .paytable h3 { color: var(--gold); margin-bottom: 8px; text-align: center; }
+  .paytable div { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #3d2446; }
+  .reset {
+    margin-top: 14px;
+    padding: 8px 16px;
+    font-size: .8rem;
+    background: #333;
+    color: #fff;
+    box-shadow: none;
+  }
+  .disclaimer { margin-top: 16px; font-size: .72rem; color: #9d86a3; text-align: center; max-width: 440px; }
+</style>
+</head>
+<body>
+
+<h1>✦ Golden Slots ✦</h1>
+<div class="sub">Hiburan dengan koin virtual, tanpa uang sungguhan</div>
+
+<div class="machine">
+  <div class="info">
+    <div>Koin: <span id="balance">1000</span></div>
+    <div>Taruhan: <span id="betDisplay">10</span></div>
+    <div>Menang: <span id="lastWin">0</span></div>
+  </div>
+
+  <div class="reels">
+    <div class="payline"></div>
+    <div class="reel" id="reel0"><div class="symbol">7️⃣</div></div>
+    <div class="reel" id="reel1"><div class="symbol">🍒</div></div>
+    <div class="reel" id="reel2"><div class="symbol">🔔</div></div>
+  </div>
+
+  <div class="win-msg" id="message">Pasang taruhanmu dan putar!</div>
+
+  <div class="bet-row">
+    <button id="minus">−</button>
+    <div class="bet-amount" id="betLabel">10 koin</div>
+    <button id="plus">+</button>
+  </div>
+
+  <button class="spin" id="spinBtn">Putar</button>
+  <button class="reset" id="resetBtn">TopUp</button>
+</div>
+
+<div class="paytable">
+  <h3>Tabel Pembayaran (baris tengah)</h3>
+  <div><span>💎 💎 💎</span><b>x50</b></div>
+  <div><span>7️⃣ 7️⃣ 7️⃣</span><b>x20</b></div>
+  <div><span>🔔 🔔 🔔</span><b>x10</b></div>
+  <div><span>🍒 🍒 🍒</span><b>x5</b></div>
+  <div><span>🍋 🍋 🍋</span><b>x3</b></div>
+  <div><span>🐉 🐉 🐉</span><b>x100</b></div>
+</div>
+
+<div class="disclaimer">Koin virtual tidak memiliki nilai uang, tidak dapat ditukar, dan tidak dapat di-top-up. Game ini hanya untuk hiburan.</div>
+
+<script>
+  
+let audioCtx = null;
+let soundOn = true;
+
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+// Membuat satu nada sederhana
+function beep(freq, duration = 0.15, type = "sine", volume = 0.2, delay = 0) {
+  if (!soundOn) return;
+  const ctx = getAudio();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value =freq;
+  const t = ctx.currentTime + delay;
+  gain.gain.setValueAtTime(volume, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + duration);
+}
+
+// Efek suara untuk setiap kejadian
+const sfx = {
+  spin()  { for (let i = 0; i < 6; i++) beep(180 + Math.random() * 120, 0.05, "square", 0.05, i * 0.07); },
+  stop()  { beep(220, 0.12, "triangle", 0.25); },
+  win()   { [523, 659, 784, 1046].forEach((f, i) => beep(f, 0.2, "triangle", 0.25, i * 0.1)); },
+  jackpot() {
+    for (let i = 0; i < 8; i++) beep(400 + i * 80, 0.18, "sawtooth", 0.15, i * 0.09);
+  },
+  lose()  { beep(300, 0.2, "sine", 0.15); beep(200, 0.3, "sine", 0.15, 0.15); },
+  click() { beep(900, 0.04, "square", 0.08); }
+};
+  const SYMBOLS = ["🍒", "🍋", "🔔", "7️⃣", "💎", "🐉"];
+  const PAY = { "💎": 50, "7️⃣": 20, "🔔": 10, "🍒": 5, "🍋": 3 , "🐉": 100};
+  const START_COINS = 10000;
+  const BETS = [500, 1000, 2500, 5000, 9000];
+
+  let balance = START_COINS;
+  let betIndex = 1;
+  let spinning = false;
+
+  const $ = id => document.getElementById(id);
+  const reels = [$("reel0"), $("reel1"), $("reel2")];
+
+  function render() {
+    $("balance").textContent = balance;
+    $("betDisplay").textContent = BETS[betIndex];
+    $("betLabel").textContent = BETS[betIndex] + " koin";
+    $("spinBtn").disabled = spinning || balance < BETS[betIndex];
+  }
+
+  function randSymbol() {
+    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+  }
+
+  function calcWin(result, bet) {
+    const [a, b, c] = result;
+    if (a === b && b === c) return bet * PAY[a];
+    if (a === b || b === c || a === c) return bet * 1;
+    return 0;
+  }
+
+  function spin() {
+    if (spinning) return;
+    const bet = BETS[betIndex];
+    if (balance < bet) {
+      $("message").textContent = "Koin virtual tidak cukup. Tekan Reset Koin untuk mulai lagi.";
+      return;
+    }
+
+    
+      sfx.spin();spinning = true;
+    balance -= bet;
+    $("lastWin").textContent = 0;
+    $("message").textContent = "Berputar...";
+    $("message").classList.remove("big");
+    render();
+
+    const result = [randSymbol(), randSymbol(), randSymbol()];
+    let ticks = 0;
+    const interval = setInterval(() => {
+      reels.forEach(r => r.classList.add("spinning"));
+      reels.forEach(r => r.firstElementChild.textContent = randSymbol());
+      ticks++;
+      if (ticks > 20) {
+        clearInterval(interval);
+        finish(result, bet);
+      }
+    }, 70);
+  }
+
+  function finish(result, bet) {
+    reels.forEach((r, i) => {
+      r.classList.remove("spinning");
+      r.firstElementChild.textContent = result[i];
+    });
+
+    const win = calcWin(result, bet);
+    if (win > 0) {
+  balance += win;
+  $("lastWin").textContent = win;
+  const isJackpot = win >= bet * 20;
+  $("message").textContent = isJackpot ? "🎉 JACKPOT! +" + win + " koin" : "Menang +" + win + " koin!";
+  if (isJackpot) {
+    $("message").classList.add("big");
+    sfx.jackpot();
+  } else {
+    sfx.win();
+  }
+} else {
+  $("message").textContent = "Coba lagi!";
+  sfx.lose();
+}
+
+    spinning = false;
+    render();
+  }
+
+  $("spinBtn").addEventListener("click", spin);
+  $("plus").addEventListener("click", () => {
+    if (!spinning && betIndex < BETS.length - 1) { betIndex++; render(); }
+  });
+  $("minus").addEventListener("click", () => {
+    if (!spinning && betIndex > 0) { betIndex--; render(); }
+  });
+  $("resetBtn").addEventListener("click", () => {
+    if (spinning) return;
+    balance = START_COINS;
+    $("message").textContent = "Koin direset ke " + START_COINS + ".";
+    render();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") { e.preventDefault(); spin(); }
+  });
+
+  render();
+</script>
+</body>
+</html>
